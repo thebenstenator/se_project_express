@@ -1,3 +1,5 @@
+# V2.0.0
+
 run-name: "Tests for project 12 and 13: ${{ github.event.head_commit.message }}"
 
 on:
