@@ -5,61 +5,59 @@ on:
     branches:
       - main
 jobs:
-  read_sprint_file:
+  get_sprint_number:
     if: ${{ github.repository != 'tripleten-com/se_project_express' }}
     runs-on: ubuntu-latest
     outputs:
       sprint: ${{ steps.sprint.outputs.SPRINT_NUMBER }}
+      base_sprint: ${{ steps.sprint.outputs.BASE_SPRINT }}
     steps:
-      - name: Print the repository
-        run: echo "Repository ${{github.repository}}"
-      - name: Set up GitHub Actions
+      - name: Checkout files
         uses: actions/checkout@v4
-      - name: Check if sprint file exist
-        run: bash .github/bin/check-sprint.sh
-      - name: Get sprint number
+        with:
+          fetch-depth: 1
+      - name: Add sprint number to output
         id: sprint
-        run: echo "SPRINT_NUMBER=$(cat sprint.txt)" >> $GITHUB_OUTPUT
+        run: bash ./.github/bin/get-sprint.sh
+      - name: Print repo name
+        run: |
+          echo "Repository name: ${{ github.repository }}"
+          echo "Repository owner: ${{ github.repository_owner }}"
 
   test_endpoints:
     if: ${{ github.repository != 'tripleten-com/se_project_express' }}
     runs-on: ubuntu-latest
-    needs: read_sprint_file
+    needs: get_sprint_number
     steps:
       - name: Set up GitHub Actions
         uses: actions/checkout@v4
-      - name: Use Node.js 20.x
+        with:
+          fetch-depth: 1
+      - name: Use Node.js 22.x
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 22.x
 
-      - name: Get testing lib 12
-        id: testing-lib-12
-        if: ${{ needs.read_sprint_file.outputs.sprint == '12' }}
-        run: set -eu && git clone --depth 1 https://github.com/tripleten-com/tests-12-public.git && mv tests-12-public tests
-
-      - name: Get testing lib 13
-        id: testing-lib-13
-        if: ${{ needs.read_sprint_file.outputs.sprint == '13' }}
-        run: set -eu && git clone --depth 1 https://github.com/tripleten-com/tests-13-public.git && mv tests-13-public tests
+      - name: Get testing lib
+        id: testing-lib
+        run: set -eu && git clone --depth 1 https://github.com/tripleten-com/se-actions-tests-p.git
 
       - name: Installing Dependencies
-        run: npm ci --loglevel=error --no-fund --no-audit
-
-      - name: Listing files
-        run: ls -la && ls -la tests
+        run: npm ci --loglevel=error --no-fund --no-audit --ignore-scripts --no-progress
 
       - name: Run test config
-        run: cd tests && bash ./bin/test-config.sh
+        working-directory: se-actions-tests-p
+        run: bash ./bin/test-config.sh
 
       - name: Start MongoDB
         uses: supercharge/mongodb-github-action@1.6.0
         with:
           mongodb-version: "4.4"
 
-      - name: Run prepare-test-endpoints
-        if: ${{ needs.read_sprint_file.outputs.sprint == '12' }}
-        run: cd tests && bash ./bin/prepare-test-endpoints.sh
+      - name: Run Pre endpoints for 12
+        if: ${{ needs.get_sprint_number.outputs.base_sprint == 12 }}
+        working-directory: se-actions-tests-p
+        run: bash ./bin/pre-endpoints.sh
 
       - name: Installing wait-port
         run: npm install -g wait-port
@@ -67,5 +65,17 @@ jobs:
       - name: Run server
         run: npm run start & wait-port -t 30000 localhost:3001
 
-      - name: Run test endpoints
-        run: cd tests && bash ./bin/test-endpoints.sh
+      - name: Run test endpoints for 12
+        if: ${{ needs.get_sprint_number.outputs.sprint == '12' }}
+        working-directory: se-actions-tests-p
+        run: bash ./bin/test-endpoints-12.sh
+
+      - name: Run test endpoints for 12-ft
+        if: ${{ needs.get_sprint_number.outputs.sprint == '12-ft' }}
+        working-directory: se-actions-tests-p
+        run: bash ./bin/test-endpoints-12-ft.sh
+
+      - name: Run test endpoints for 13
+        if: ${{ needs.get_sprint_number.outputs.sprint == '13' }}
+        working-directory: se-actions-tests-p
+        run: bash ./bin/test-endpoints-13.sh
