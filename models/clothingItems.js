@@ -6,7 +6,7 @@ const clothingItemSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 2,
-    maxlength: 50,
+    maxlength: 30,
   },
   weather: {
     type: String,
@@ -28,16 +28,15 @@ const clothingItemSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
-  likes: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "user",
-    },
-  ],
+  likes: {
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    default: [],
+  },
+
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-module.exports = mongoose.model("item", clothingItemSchema);
+module.exports = mongoose.model("clothingItem", clothingItemSchema);

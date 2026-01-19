@@ -17,16 +17,22 @@ app.use("/", mainRouter);
 const errorHandler = (err, req, res, next) => {
   console.error(err);
   if (err.name === "ValidationError") {
-    return res.status(400).send({ message: "Validation Error" });
+    return res
+      .status(BAD_REQUEST_ERROR_CODE)
+      .send({ message: "Validation Error" });
   }
   if (err.name === "CastError") {
-    return res.status(400).send({ message: "Invalid item ID" });
+    return res
+      .status(BAD_REQUEST_ERROR_CODE)
+      .send({ message: "Invalid item ID" });
   }
   if (err.name === "DocumentNotFoundError") {
-    return res.status(404).send({ message: "Item not found" });
+    return res.status(NOT_FOUND_ERROR_CODE).send({ message: "Item not found" });
   }
-  return res.status(500).send({ message: err.message || "An internal server error occurred" });
-}
+  return res
+    .status(INTERNAL_SERVER_ERROR_CODE)
+    .send({ message: "An internal server error occurred" });
+};
 
 app.use(errorHandler);
 
