@@ -19,7 +19,7 @@ app.use((req, res, next) => {
 });
 app.use("/", mainRouter);
 
-const errorHandler = (err, req, res, next) => {
+const errorHandler = (err, req, res, _next) => {
   console.error(err);
   if (err.name === "ValidationError") {
     return res
