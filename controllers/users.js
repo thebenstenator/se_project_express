@@ -100,7 +100,7 @@ const createUser = (req, res) => {
     .then((user) => {
       const { password: hashedPassword, ...userWithoutPassword } =
         user.toObject();
-      res.status(201).send(userWithoutPassword);
+      return res.status(201).send(userWithoutPassword);
     })
     .catch((err) => {
       console.error(err);
