@@ -87,7 +87,7 @@ const createUser = (req, res) => {
       .send({ message: "Password is required" });
   }
 
-  bcrypt
+  return bcrypt
     .hash(password, 10)
     .then((hashedPassword) =>
       User.create({
