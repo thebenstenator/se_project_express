@@ -92,7 +92,10 @@ const createUser = (req, res) => {
         password: hashedPassword,
       });
     })
-    .then((user) => res.status(201).send(user))
+    .then((user) => {
+      const { password, ...userWithoutPassword } = user.toObject();
+      res.status(201).send(userWithoutPassword);
+    })
     .catch((err) => {
       console.error(err);
       if (err.code === 11000) {
@@ -114,12 +117,18 @@ const createUser = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body;
 
+  if (!email || !password) {
+    return res
+      .status(BAD_REQUEST_ERROR_CODE)
+      .send({ message: "Email and password are required" });
+  }
+
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.send({ token });
+      return res.status(200).send({ token });
     })
     .catch((err) => {
       console.error(err);
