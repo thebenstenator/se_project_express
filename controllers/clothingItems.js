@@ -3,6 +3,7 @@ const {
   BAD_REQUEST_ERROR_CODE,
   NOT_FOUND_ERROR_CODE,
   INTERNAL_SERVER_ERROR_CODE,
+  FORBIDDEN_ERROR_CODE,
 } = require("../utils/errors");
 
 const getClothingItems = (req, res) => {
@@ -36,10 +37,18 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
+
   ClothingItem.findByIdAndDelete(itemId)
     .orFail()
     .then((item) => {
-      res.status(200).send(item);
+      if (item.owner.toString() !== req.user._id) {
+        return res
+          .status(FORBIDDEN_ERROR_CODE)
+          .send({ message: "You can only delete your own items" });
+      }
+      return ClothingItem.findByIdAndDelete(itemId).then(() => {
+        res.status(200).send({ message: "Item deleted successfully" });
+      });
     })
     .catch((err) => {
       console.error(err);
