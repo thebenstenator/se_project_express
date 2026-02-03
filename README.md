@@ -2,6 +2,10 @@
 
 The backend API for the WTWR (What to Wear?) application. This server provides RESTful API endpoints for managing clothing items and user interactions, including creating, reading, updating, and deleting clothing items, as well as liking and disliking items.
 
+## Project Pitch
+
+[Check out this video for a quick rundown](https://drive.google.com/file/d/1tyU6JgtM-tdV3WmwZhKnX12U4m8jvIBC/view?usp=sharing)
+
 ## About the Project
 
 This project is part of a software engineering bootcamp and focuses on building a robust backend server with the following capabilities:
