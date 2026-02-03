@@ -45,7 +45,6 @@ const getCurrentUser = (req, res) => {
 };
 
 const updateCurrentUser = (req, res) => {
-  const { name, avatar } = req.body;
   const updates = {};
 
   if (req.body.name !== undefined) {
@@ -82,18 +81,25 @@ const updateCurrentUser = (req, res) => {
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
 
+  if (!password) {
+    return res
+      .status(BAD_REQUEST_ERROR_CODE)
+      .send({ message: "Password is required" });
+  }
+
   bcrypt
     .hash(password, 10)
-    .then((hashedPassword) => {
-      return User.create({
+    .then((hashedPassword) =>
+      User.create({
         name,
         avatar,
         email,
         password: hashedPassword,
-      });
-    })
+      })
+    )
     .then((user) => {
-      const { password, ...userWithoutPassword } = user.toObject();
+      const { password: hashedPassword, ...userWithoutPassword } =
+        user.toObject();
       res.status(201).send(userWithoutPassword);
     })
     .catch((err) => {
@@ -132,9 +138,14 @@ const login = (req, res) => {
     })
     .catch((err) => {
       console.error(err);
+      if (err.message === "Incorrect email or password") {
+        return res
+          .status(UNAUTHORIZED_ERROR_CODE)
+          .send({ message: "Incorrect email or password" });
+      }
       return res
-        .status(UNAUTHORIZED_ERROR_CODE)
-        .send({ message: "Incorrect email or password" });
+        .status(INTERNAL_SERVER_ERROR_CODE)
+        .send({ message: "An error has occurred on the server" });
     });
 };
 

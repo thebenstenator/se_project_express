@@ -22,5 +22,5 @@ module.exports = (req, res, next) => {
       .send({ message: "Invalid token" });
   }
   req.user = payload;
-  next();
+  return next();
 };
