@@ -25,9 +25,11 @@ const createClothingItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid data" });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({
+          message: `${Object.values(err.errors)
+            .map((e) => e.message)
+            .join(" ")}`,
+        });
       }
       return res
         .status(INTERNAL_SERVER_ERROR_CODE)

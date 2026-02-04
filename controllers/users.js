@@ -1,4 +1,4 @@
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET } = require("../utils/config");
 
@@ -10,17 +10,6 @@ const {
   CONFLICT_ERROR_CODE,
   UNAUTHORIZED_ERROR_CODE,
 } = require("../utils/errors");
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err);
-      return res
-        .status(INTERNAL_SERVER_ERROR_CODE)
-        .send({ message: "An error has occurred on the server" });
-    });
-};
 
 const getCurrentUser = (req, res) => {
   User.findById(req.user._id)
@@ -68,9 +57,11 @@ const updateCurrentUser = (req, res) => {
           .send({ message: "User not found" });
       }
       if (err.name === "ValidationError" || err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid data" });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({
+          message: `${Object.values(err.errors)
+            .map((e) => e.message)
+            .join(" ")}`,
+        });
       }
       return res
         .status(INTERNAL_SERVER_ERROR_CODE)
@@ -98,9 +89,7 @@ const createUser = (req, res) => {
       })
     )
     .then((user) => {
-      const { password: hashedPassword, ...userWithoutPassword } =
-        user.toObject();
-      return res.status(201).send(userWithoutPassword);
+      return res.status(201).send(user);
     })
     .catch((err) => {
       console.error(err);
@@ -110,9 +99,11 @@ const createUser = (req, res) => {
           .send({ message: "Email already in use" });
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST_ERROR_CODE)
-          .send({ message: "Invalid data" });
+        return res.status(BAD_REQUEST_ERROR_CODE).send({
+          message: `${Object.values(err.errors)
+            .map((e) => e.message)
+            .join(" ")}`,
+        });
       }
       return res
         .status(INTERNAL_SERVER_ERROR_CODE)
@@ -150,7 +141,6 @@ const login = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   updateCurrentUser,
   getCurrentUser,
   createUser,

@@ -6,8 +6,8 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    minlength: 2,
-    maxlength: 30,
+    minlength: [2, "Name must be at least 2 characters long"],
+    maxlength: [30, "Name must be no more than 30 characters long"],
   },
   avatar: {
     type: String,
@@ -36,6 +36,12 @@ const userSchema = new mongoose.Schema({
     select: false,
   },
 });
+
+userSchema.methods.toJSON = function toJSON() {
+  const obj = this.toObject();
+  delete obj.password;
+  return obj;
+};
 
 userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
