@@ -92,7 +92,13 @@ const createUser = (req, res) => {
       const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
         expiresIn: "7d",
       });
-      return res.status(201).send({ token, user });
+      return res.status(201).send({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        avatar: user.avatar,
+        token,
+      });
     })
     .catch((err) => {
       console.error(err);
