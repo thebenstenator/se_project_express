@@ -3,11 +3,16 @@ const userRouter = require("./users");
 const clothingItemRouter = require("./clothingItems");
 const { NOT_FOUND_ERROR_CODE } = require("../utils/errors");
 const { login, createUser } = require("../controllers/users");
+const {
+  validateUserBody,
+  validateAuthentication,
+} = require("../middlewares/validation");
+
+router.post("/signin", validateAuthentication, login);
+router.post("/signup", validateUserBody, createUser);
 
 router.use("/items", clothingItemRouter);
 router.use("/users", userRouter);
-router.post("/signin", login);
-router.post("/signup", createUser);
 
 router.use((req, res) => {
   res
