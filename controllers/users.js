@@ -17,9 +17,8 @@ const getCurrentUser = (req, res, next) => {
       }
       if (err.name === "CastError") {
         return next(new BadRequestError("Invalid data"));
-      } else {
-        return next(err);
       }
+      return next(err);
     });
 };
 
