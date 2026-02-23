@@ -2,6 +2,14 @@
 
 The backend API for the WTWR (What to Wear?) application. This server provides RESTful API endpoints for managing clothing items and user interactions, including creating, reading, updating, and deleting clothing items, as well as liking and disliking items.
 
+## Deployed at
+
+**Domain:** https://cloudcloset.1ax.us
+
+## Frontend repo
+
+**GitHub:** https://github.com/thebenstenator/se_project_react
+
 ## Project Pitch
 
 [Check out this video for a quick rundown](https://drive.google.com/file/d/1tyU6JgtM-tdV3WmwZhKnX12U4m8jvIBC/view?usp=sharing)
