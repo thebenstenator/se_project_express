@@ -18,7 +18,7 @@ const getCurrentUser = (req, res, next) => {
       if (err.name === "CastError") {
         return next(new BadRequestError("Invalid data"));
       } else {
-        next(err);
+        return next(err);
       }
     });
 };
@@ -51,9 +51,8 @@ const updateCurrentUser = (req, res, next) => {
               .join(" ")}`
           )
         );
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
@@ -98,9 +97,8 @@ const createUser = (req, res, next) => {
               .join(" ")}`
           )
         );
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
@@ -129,9 +127,8 @@ const login = (req, res, next) => {
     .catch((err) => {
       if (err.message === "Incorect email or password") {
         return next(new UnauthorizedError("Incorrect email or password"));
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 

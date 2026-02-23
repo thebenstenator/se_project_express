@@ -16,16 +16,15 @@ const createClothingItem = (req, res, next) => {
     .then((item) => res.status(201).send(item))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next(
+        return next(
           new BadRequestError(
             `${Object.values(err.errors)
               .map((e) => e.message)
               .join(" ")}`
           )
         );
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
@@ -48,9 +47,8 @@ const deleteClothingItem = (req, res, next) => {
       }
       if (err.name === "CastError") {
         return next(new BadRequestError("Invalid data"));
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
@@ -71,9 +69,8 @@ const likeClothingItem = (req, res, next) => {
       }
       if (err.name === "CastError") {
         return next(new BadRequestError("Invalid data"));
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
@@ -94,9 +91,8 @@ const dislikeClothingItem = (req, res, next) => {
       }
       if (err.name === "CastError") {
         return next(new BadRequestError("Invalid data"));
-      } else {
-        next(err);
       }
+      return next(err);
     });
 };
 
