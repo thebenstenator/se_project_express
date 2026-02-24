@@ -12,7 +12,7 @@ The backend API for the WTWR (What to Wear?) application. This server provides R
 
 ## Project Pitch
 
-[Check out this video for a quick rundown](https://drive.google.com/file/d/1tyU6JgtM-tdV3WmwZhKnX12U4m8jvIBC/view?usp=sharing)
+[Check out this video for a quick rundown](https://drive.google.com/file/d/1VArBok_Gr9yzsUP1zmJC111nUEQh72zR/view?usp=sharing)
 
 ## About the Project
 
